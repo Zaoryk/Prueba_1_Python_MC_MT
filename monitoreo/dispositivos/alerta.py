@@ -1,4 +1,5 @@
 from django.db import models
+from .dispositivo import Dispositivo
 
 class Alerta(models.Model):
     dispositivo = models.ForeignKey(Dispositivo, on_delete=models.CASCADE, related_name="alertas")
