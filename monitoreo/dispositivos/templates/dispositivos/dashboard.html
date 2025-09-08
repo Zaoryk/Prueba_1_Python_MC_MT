@@ -1,0 +1,107 @@
+{% extends "dispositivos/base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <div class="row">
+    <!-- Dispositivos por categoría -->
+    <div class="col-md-4">
+      <div class="card mb-3">
+        <div class="card-header">Dispositivos por Categoría</div>
+        <ul class="list-group list-group-flush">
+          {% for cat in devices_by_category %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              {{ cat.name }}
+              <span class="badge bg-primary">{{ cat.count }}</span>
+            </li>
+          {% empty %}
+            <li class="list-group-item">No categories available</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <!-- Dispositivos por zona -->
+    <div class="col-md-4">
+      <div class="card mb-3">
+        <div class="card-header">Dispositivos por Zona</div>
+        <ul class="list-group list-group-flush">
+          {% for zone in devices_by_zone %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              {{ zone.name }}
+              <span class="badge bg-success">{{ zone.count }}</span>
+            </li>
+          {% empty %}
+            <li class="list-group-item">No zones available</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <!-- Alertas de la semana -->
+    <div class="col-md-4">
+      <div class="card mb-3">
+        <div class="card-header">Alertas de la Semana</div>
+        <div class="card-body">
+          <span class="badge bg-danger">Grave: {{ alerts_count.Critical }}</span>
+          <span class="badge bg-warning text-dark">Alta: {{ alerts_count.High }}</span>
+          <span class="badge bg-info text-dark">Media: {{ alerts_count.Medium }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Últimas mediciones -->
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card mb-3">
+        <div class="card-header">Últimas 10 Mediciones</div>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Fecha/Hora</th>
+              <th>Dispositivo</th>
+              <th>Valor</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for m in last_measurements %}
+              <tr>
+                <td>{{ m.measured_at|date:"Y-m-d H:i" }}</td>
+                <td>{{ m.device.name }}</td>
+                <td>{{ m.value }}</td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="3">No measurements available</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Alertas recientes -->
+    <div class="col-md-4">
+      <div class="card mb-3">
+        <div class="card-header">Alertas Recientes</div>
+        <ul class="list-group list-group-flush">
+          {% for alert in recent_alerts %}
+            <li class="list-group-item">
+              <strong>{{ alert.device.name }}</strong> - {{ alert.message|truncatewords:6 }}
+              <!-- Before: -->
+<span class="badge bg-{{ alert.severity|lower }}">
+
+<!-- After (use these classes instead): -->
+<span class="badge {% if alert.severity == 'Critical' %}bg-danger
+                   {% elif alert.severity == 'High' %}bg-warning text-dark
+                   {% elif alert.severity == 'Medium' %}bg-info text-dark{% endif %}">
+              </span>
+            </li>
+          {% empty %}
+            <li class="list-group-item">No alerts available</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
